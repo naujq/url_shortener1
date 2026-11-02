@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>URL Shortener</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 4rem auto; padding: 0 1rem; }
+    input { width: 100%; padding: 0.6rem; box-sizing: border-box; }
+    button { margin-top: 0.5rem; padding: 0.6rem 1rem; cursor: pointer; }
+    #error { color: #c00; }
+  </style>
+</head>
+<body>
+  <h1>URL Shortener</h1>
+  <input id="url" type="url" placeholder="https://example.com/very/long/link">
+  <button id="shorten">Shorten</button>
+  <p id="error"></p>
+  <p id="result"></p>
+
+  <script>
+    const urlInput = document.getElementById("url");
+    const errorEl = document.getElementById("error");
+    const resultEl = document.getElementById("result");
+
+    document.getElementById("shorten").addEventListener("click", async () => {
+      errorEl.textContent = "";
+      resultEl.textContent = "";
+
+      try {
+        const response = await fetch("/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: urlInput.value }),
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          errorEl.textContent = data.error || "Something went wrong";
+          return;
+        }
+
+        const link = document.createElement("a");
+        link.href = data.short_url;
+        link.textContent = data.short_url;
+        resultEl.append("Your short link: ", link);
+      } catch (err) {
+        errorEl.textContent = "Could not reach the server";
+      }
+    });
+  </script>
+</body>
+</html>

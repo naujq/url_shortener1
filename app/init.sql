@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS urls (
+    id          BIGSERIAL PRIMARY KEY,
+    short_code  VARCHAR(16)   NOT NULL UNIQUE,
+    long_url    VARCHAR(2048) NOT NULL UNIQUE,
+    created_at  TIMESTAMPTZ   NOT NULL DEFAULT now()
+);
